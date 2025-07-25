@@ -403,6 +403,7 @@
         /* Search container */
         .search-container {
             display: flex;
+            flex-direction: column; /* Stacks vertically by default for mobile */
             gap: 12px;
             align-items: center;
             max-width: 800px;
@@ -410,8 +411,15 @@
             margin: 0 auto;
         }
 
+        @media (min-width: 640px) { /* sm breakpoint */
+            .search-container {
+                flex-direction: row; /* Horizontal layout on larger screens */
+            }
+        }
+
         #prompt-input {
             flex-grow: 1;
+            width: 100%; /* Full width on mobile */
             background-color: rgba(17, 17, 17, 0.5);
             border: 1px solid #222;
             border-radius: 9999px;
@@ -419,6 +427,16 @@
             font-size: 1.125rem;
             color: white;
         }
+        
+        #search-button {
+            width: 100%; /* Full width on mobile */
+        }
+        @media (min-width: 640px) { /* sm breakpoint */
+             #search-button {
+                width: auto; /* Auto width on larger screens */
+             }
+        }
+
 
         body.light-mode #prompt-input {
             background-color: rgba(255, 255, 255, 0.9);
@@ -439,6 +457,12 @@
             color: #00c6ff;
             border-bottom: 1px solid rgba(0, 198, 255, 0.3);
             padding-bottom: 0.5rem;
+        }
+
+        .content-section pre, .content-section code,
+        .notebook-page pre, .notebook-page code {
+            white-space: pre-wrap;   /* This is the key: it preserves formatting but allows wrapping */
+            word-break: break-all;     /* This is a safeguard for very long, unbreakable strings */
         }
         
         .content-section p {
@@ -482,7 +506,7 @@
             background: rgba(30, 30, 30, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
-            padding: 2rem;
+            padding: 1.5rem;
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             position: relative;
@@ -505,7 +529,7 @@
         }
 
         .quiz-question h3 {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
             color: #00c6ff;
@@ -521,7 +545,7 @@
             background: rgba(40, 40, 40, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            padding: 1.25rem 1.5rem;
+            padding: 1rem 1.25rem;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             display: flex;
@@ -766,22 +790,26 @@
             }
         }
 
-        /* --- Whiteboard styles (NEW) --- */
+        /* --- Whiteboard styles (RESPONSIVE) --- */
         #whiteboard-container {
             position: relative;
             background: #fff;
             border-radius: 16px;
-            min-height: 600px;
-            max-width: 98vw;
+            width: 100%;
+            max-width: 1200px; /* Max width for large screens */
+            height: 70vh; /* Responsive height */
+            min-height: 500px;
             margin: 3rem auto 1.5rem auto;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             display: none; /* Initially hidden */
+            padding-top: 70px; /* Space for toolbar */
+            box-sizing: border-box;
         }
         #wb-toolbar {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 0.4rem 1.2rem;
+            gap: 5px;
+            padding: 0.5rem 1rem;
             background: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 12px #0002;
@@ -790,17 +818,21 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 21;
+            max-width: calc(100% - 30px);
+            overflow-x: auto; /* Allows horizontal scrolling on mobile */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
         }
         .wb-toolbtn {
             background: none;
             border: none;
             outline: none;
-            font-size: 1.25rem;
-            padding: 0.2rem 0.8rem;
+            font-size: 1.1rem; /* Slightly smaller for mobile */
+            padding: 0.4rem 0.6rem;
             border-radius: 5px;
             cursor: pointer;
             transition: background .14s;
             color: #222;
+            flex-shrink: 0; /* Prevent buttons from shrinking */
         }
         .wb-toolbtn.active, .wb-toolbtn:hover {
             background: #e0edff;
@@ -814,10 +846,9 @@
             border-radius: 6px;
             padding: 12px 13px 9px 13px;
             position: absolute;
-            left: 24px;
-            top: 60px;
+            left: 1rem;
+            top: 85px; /* Positioned below the toolbar */
             z-index: 20;
-            min-width: 140px;
             box-shadow: 0 2px 16px #0001;
         }
         .wb-color-btn {
@@ -826,7 +857,6 @@
             border-radius: 3px;
             border: 2px solid #bbb;
             display: inline-block;
-            margin-right: 2px;
             cursor: pointer;
             box-sizing: border-box;
             transition: border 0.13s;
@@ -835,17 +865,26 @@
             border: 2.5px solid #111;
         }
         #whiteboard-canvas {
-            width: 98%;
-            margin: 76px auto 1rem auto;
+            width: 100%; /* Fills the container */
+            height: 100%; /* Fills the container */
             display: block;
             background: #fff;
-            box-shadow: 0 2px 20px #0000;
             border-radius: 10px;
             border: 1px solid #e5eaf6;
-            min-height: 500px;
         }
-        @media (max-width: 700px) {
-            #whiteboard-container { min-width: 100vw; }
+        @media (max-width: 640px) {
+            #whiteboard-container {
+                height: 60vh; /* Adjust height for smaller screens */
+                min-height: 400px;
+            }
+            #wb-colors-card {
+                top: 80px; /* Adjust vertical position */
+                left: 10px;
+            }
+            .wb-toolbtn {
+                font-size: 1rem;
+                padding: 0.3rem 0.5rem;
+            }
         }
     
     </style>
@@ -861,7 +900,7 @@
 
     <div class="main-container container mx-auto p-4 md:p-8">
         <div class="text-center mb-12">
-            <h1 class="text-5xl md:text-7xl font-bold mb-3 tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-gray-200 via-gray-400 to-gray-600">
+            <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold mb-3 tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-gray-200 via-gray-400 to-gray-600">
                 Content Explorer
             </h1>
             <p class="text-gray-400 text-lg">Your AI-powered research assistant.</p>
@@ -869,7 +908,7 @@
 
         <div class="max-w-5xl mx-auto mb-16 px-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="feature-card group relative overflow-hidden p-8 rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-800/50 border border-gray-700/50 backdrop-blur-sm transition-all duration-500 hover:border-cyan-400/30 hover:shadow-xl hover:shadow-cyan-500/10">
+                <div class="feature-card group relative overflow-hidden p-6 md:p-8 rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-800/50 border border-gray-700/50 backdrop-blur-sm transition-all duration-500 hover:border-cyan-400/30 hover:shadow-xl hover:shadow-cyan-500/10">
                     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div class="relative z-10">
                         <div class="feature-icon mb-6 text-5xl bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent transition-all duration-300 group-hover:scale-110">⚡</div>
@@ -878,7 +917,7 @@
                     </div>
                 </div>
 
-                <div class="feature-card group relative overflow-hidden p-8 rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-800/50 border border-gray-700/50 backdrop-blur-sm transition-all duration-500 hover:border-emerald-400/30 hover:shadow-xl hover:shadow-emerald-500/10">
+                <div class="feature-card group relative overflow-hidden p-6 md:p-8 rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-800/50 border border-gray-700/50 backdrop-blur-sm transition-all duration-500 hover:border-emerald-400/30 hover:shadow-xl hover:shadow-emerald-500/10">
                     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div class="relative z-10">
                         <div class="feature-icon mb-6 text-5xl bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent transition-all duration-300 group-hover:scale-110">📚</div>
@@ -887,7 +926,7 @@
                     </div>
                 </div>
 
-                <div class="feature-card group relative overflow-hidden p-8 rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-800/50 border border-gray-700/50 backdrop-blur-sm transition-all duration-500 hover:border-purple-400/30 hover:shadow-xl hover:shadow-purple-500/10">
+                <div class="feature-card group relative overflow-hidden p-6 md:p-8 rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-800/50 border border-gray-700/50 backdrop-blur-sm transition-all duration-500 hover:border-purple-400/30 hover:shadow-xl hover:shadow-purple-500/10">
                     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div class="relative z-10">
                         <div class="feature-icon mb-6 text-5xl bg-gradient-to-r from-purple-400 to-indigo-500 bg-clip-text text-transparent transition-all duration-300 group-hover:scale-110">🔍</div>
@@ -898,35 +937,31 @@
             </div>
         </div>
         
-        <div class="max-w-2xl mx-auto mb-8">
+        <div class="max-w-2xl mx-auto mb-8 px-4">
             <div class="search-container">
-                <input type="text" id="prompt-input" class="w-full bg-gray-900/50 border border-gray-700 rounded-full py-4 px-6 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500" placeholder="Enter a topic...">
-                <button id="search-button" class="glow-btn text-white font-bold py-4 px-8 rounded-full">
+                <input type="text" id="prompt-input" class="bg-gray-900/50 border border-gray-700 rounded-full py-3 px-5 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500" placeholder="Enter a topic...">
+                <button id="search-button" class="glow-btn text-white font-bold py-3 px-8 rounded-full sm:w-auto w-full">
                     Generate
                 </button>
             </div>
         </div>
         
-
-
-        <div class="flex justify-center items-center space-x-4 mb-12">
-            <button id="show-summary-button" class="secondary-btn bg-transparent text-gray-300 font-bold py-2 px-8 rounded-full hidden">
-                <i class="fas fa-file-alt mr-2"></i>View Summary
+        <div class="flex flex-wrap justify-center items-center gap-4 mb-12 px-4">
+            <button id="show-summary-button" class="secondary-btn bg-transparent text-gray-300 font-bold py-2 px-6 rounded-full hidden">
+                <i class="fas fa-file-alt mr-2"></i>Summary
             </button>
-            <button id="create-notes-button" class="secondary-btn bg-transparent text-gray-300 font-bold py-2 px-8 rounded-full hidden">
-                    Create Notes
-                </button>
-            <button id="create-quiz-button" class="secondary-btn bg-transparent text-gray-300 font-bold py-2 px-8 rounded-full hidden">
-                    Create Quiz
-                </button>
-            <button id="whiteboard-button" class="secondary-btn bg-transparent text-gray-300 font-bold py-2 px-8 rounded-full hidden">
-                    <i class="fas fa-paint-brush mr-2"></i>Whiteboard
-                </button>
+            <button id="create-notes-button" class="secondary-btn bg-transparent text-gray-300 font-bold py-2 px-6 rounded-full hidden">
+                <i class="fas fa-book mr-2"></i>Notes
+            </button>
+            <button id="create-quiz-button" class="secondary-btn bg-transparent text-gray-300 font-bold py-2 px-6 rounded-full hidden">
+                <i class="fas fa-question-circle mr-2"></i>Quiz
+            </button>
+            <button id="whiteboard-button" class="secondary-btn bg-transparent text-gray-300 font-bold py-2 px-6 rounded-full hidden">
+                <i class="fas fa-paint-brush mr-2"></i>Whiteboard
+            </button>
         </div>
 
-
-
-        <div id="error-container" class="max-w-4xl mx-auto my-4"></div>
+        <div id="error-container" class="max-w-4xl mx-auto my-4 px-4"></div>
         
         <div id="loading" class="text-center my-12 hidden">
             <p class="text-lg">
@@ -938,19 +973,19 @@
             </p>
         </div>
 
-        <div id="generated-text-container" class="max-w-4xl mx-auto my-8 hidden">
-             <div class="card p-8 rounded-xl">
+        <div id="generated-text-container" class="max-w-4xl mx-auto my-8 hidden px-4">
+             <div class="card p-6 md:p-8 rounded-xl">
                 <h2 class="text-3xl font-bold mb-6">About <span id="topic-title"></span></h2>
                 <div id="generated-text" class="content-section text-gray-300"></div>
             </div>
         </div>
 
-        <div id="notes-container" class="max-w-4xl mx-auto my-8 hidden">
+        <div id="notes-container" class="max-w-4xl mx-auto my-8 hidden px-4">
             <div class="card p-2 rounded-xl">
                 <div id="notes-content" class="notebook-page rounded-lg"></div>
             </div>
         </div>
-
+        
         <div id="whiteboard-container">
             <div id="wb-toolbar">
                 <button class="wb-toolbtn active" data-tool="pen" title="Pen"><i class="fas fa-paint-brush"></i></button>
@@ -972,10 +1007,9 @@
                 <div class="wb-color-btn" style="background:#ffee00;" data-color="#ffee00"></div>
                 <div class="wb-color-btn" style="background:#ffd200;" data-color="#ffd200"></div>
             </div>
-            <canvas id="whiteboard-canvas" width="1100" height="540"></canvas>
-        </div>
+            <canvas id="whiteboard-canvas"></canvas> </div>
 
-        <div id="results-container" class="flex flex-col gap-8 hidden">
+        <div id="results-container" class="flex flex-col gap-8 hidden px-4">
             <div class="card p-6 rounded-xl max-w-4xl mx-auto w-full">
                 <h2 class="text-2xl font-bold mb-4">Video Recommendations</h2>
                 <div id="video-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
@@ -1001,7 +1035,7 @@
             </div>
         </div>
         
-        <div id="quiz-container" class="max-w-4xl mx-auto mt-8 hidden">
+        <div id="quiz-container" class="max-w-4xl mx-auto mt-8 hidden px-4">
             <div class="text-center mb-8">
                 <h2 class="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">
                     Knowledge Check
@@ -1152,6 +1186,8 @@
                         el.classList.remove('hidden');
                         if (el === whiteboardContainer) {
                             el.style.display = 'block';
+                            // Trigger canvas resize when it becomes visible
+                            window.dispatchEvent(new Event('resize')); 
                         }
                     }
                 });
@@ -1164,13 +1200,28 @@
                 }
             }
 
-            // Initialize Whiteboard
+            // Initialize Whiteboard (Responsive Version)
             function initWhiteboard() {
                 const canvas = document.getElementById('whiteboard-canvas');
+                if (!canvas) return;
                 const ctx = canvas.getContext('2d');
                 let drawing = false, tool = 'pen', strokeColor = '#000', 
                     startX = 0, startY = 0, currX = 0, currY = 0;
                 let shapes = [], undone = [], currentShape = null;
+
+                // Function to resize canvas and redraw content
+                function resizeCanvas() {
+                    const tempShapes = shapes; // Store current drawing
+                    const tempUndone = undone;
+
+                    // Match canvas drawing buffer size to its display size
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+
+                    shapes = tempShapes; // Restore drawing
+                    undone = tempUndone;
+                    redraw(); // Redraw everything on the new size
+                }
 
                 // Toolbar
                 document.querySelectorAll('.wb-toolbtn').forEach(btn=>{
@@ -1200,8 +1251,8 @@
                     const rect = canvas.getBoundingClientRect();
                     if (e.touches) e = e.touches[0];
                     return {
-                        x: (e.clientX - rect.left) * (canvas.width/rect.width),
-                        y: (e.clientY - rect.top) * (canvas.height/rect.height),
+                        x: (e.clientX - rect.left) * (canvas.width / rect.width),
+                        y: (e.clientY - rect.top) * (canvas.height / rect.height),
                     }
                 }
                 function redraw() {
@@ -1342,8 +1393,10 @@
                         a.click();
                     }
                 }
-                canvas.addEventListener('touchstart', e=>e.preventDefault());
-                canvas.addEventListener('touchmove', e=>e.preventDefault());
+                
+                // Initial and responsive resizing
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
             }
 
             async function callGemini(prompt, jsonSchema = null) {
@@ -1351,26 +1404,63 @@
                     showError("API Key is not set. Please provide your key.");
                     return null;
                 }
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${userApiKey}`;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${userApiKey}`;
                 const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+
                 if (jsonSchema) {
-                    payload.generationConfig = { responseMimeType: "application/json", responseSchema: jsonSchema };
+                    // Use the modern 'tools' approach for structured JSON output
+                    payload.tools = [{
+                        functionDeclarations: [{
+                            name: "quiz_formatter",
+                            description: "Formats the quiz questions and answers into a structured JSON object.",
+                            parameters: jsonSchema
+                        }]
+                    }];
+                    payload.toolConfig = {
+                        functionCallingConfig: {
+                            mode: "ANY" // Instructs the model to call the specified function.
+                        }
+                    };
                 }
+
                 try {
                     const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
+
                     if (!response.ok) {
                         const errorData = await response.json();
                         throw new Error(`API Error: ${response.status} - ${errorData.error.message || 'Check your API Key.'}`);
                     }
+
                     const result = await response.json();
-                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content) {
-                        return result.candidates[0].content.parts[0].text;
+
+                    if (!result.candidates || result.candidates.length === 0) {
+                        if (result.promptFeedback && result.promptFeedback.blockReason) {
+                            throw new Error(`Request blocked by API. Reason: ${result.promptFeedback.blockReason}`);
+                        }
+                        throw new Error("No content received from API.");
                     }
-                    throw new Error("No content received from API.");
+                    
+                    const part = result.candidates[0].content.parts[0];
+
+                    if (jsonSchema) {
+                        // When JSON is expected, we ONLY accept a function call.
+                        if (part.functionCall && part.functionCall.name === "quiz_formatter") {
+                            // The arguments are the JSON object we want. Stringify them to be parsed by the calling function.
+                            return JSON.stringify(part.functionCall.args);
+                        } else {
+                            // If the model didn't use the tool as requested, it failed to comply.
+                            console.error("API did not return the expected JSON format. Response part:", part);
+                            throw new Error("The AI failed to generate the quiz in the required format. Please try a different topic or try again.");
+                        }
+                    } else {
+                        // For regular text generation
+                        return part.text || "";
+                    }
+
                 } catch (error) {
                     console.error("Gemini API call failed:", error);
                     showError(error.message);
@@ -1379,8 +1469,7 @@
             }
 
             async function fetchAndDisplayYouTubeVideos(query) {
-                // IMPORTANT: Replace this with your actual YouTube Data API v3 key
-                const apiKey = 'AIzaSyAdPVdmlR4LM5_wVy0y9T6Oyzby3qdumSk'; 
+                const apiKey = 'AIzaSyAdPVdmlR4LM5_wVy0y9T6Oyzby3qdumSk'; // Replace with your actual key
                 const maxResults = 4;
                 const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=${maxResults}&q=${encodeURIComponent(query + " tutorial")}&key=${apiKey}`;
 
@@ -1436,6 +1525,13 @@
                     handleApiRequest(() => fetchData(query));
                 }
             });
+            
+            promptInput.addEventListener('keypress', (e) => {
+                if(e.key === 'Enter') {
+                    searchButton.click();
+                }
+            });
+
 
             createQuizButton.addEventListener('click', () => {
                 if (currentQuery) handleApiRequest(() => createQuiz(currentQuery));
@@ -1474,7 +1570,6 @@
             });
 
             moreQuestionsButton.addEventListener('click', () => {
-                // Clear cache for the current query to get a new quiz
                 if (cachedQuiz[currentQuery]) {
                     delete cachedQuiz[currentQuery];
                 }
@@ -1485,6 +1580,12 @@
                 quizContent.scrollIntoView({ behavior: 'smooth' });
             });
             closePromptModalButton.addEventListener('click', () => promptModal.classList.add('hidden'));
+            apiKeyModal.addEventListener('click', (e) => {
+                if (e.target === apiKeyModal) {
+                    apiKeyModal.classList.add('hidden');
+                }
+            });
+
 
             function showLoading(state) {
                 loadingIndicator.classList.toggle('hidden', !state);
@@ -1502,12 +1603,7 @@
                 showLoading(true);
                 searchButton.classList.add('blinking-glow');
                 
-                const summaryText = await callGemini(`Provide a detailed, well-structured summary about "${query}". 
-                    Explain what it is, its importance, and key concepts. 
-                    Format the response with clear sections using <h3> for headings and <p> for paragraphs. 
-                    Use <strong> for important terms instead of asterisks. 
-                    Include bullet points when appropriate using <ul> and <li>. 
-                    Ensure the content is up-to-date and accurate.`);
+                const summaryText = await callGemini(`Provide a detailed, well-structured summary about "${query}". Explain what it is, its importance, and key concepts. Format the response with clear sections using <h3> for headings and <p> for paragraphs. Use <strong> for important terms instead of asterisks. Include bullet points when appropriate using <ul> and <li>. Ensure the content is up-to-date and accurate.`);
 
                 showLoading(false);
                 searchButton.classList.remove('blinking-glow');
@@ -1531,64 +1627,74 @@
 
             function displayGeneratedText(query, text) {
                 topicTitle.textContent = query;
-                // Remove leading `````` and trailing ```
-                let cleanedText = text
-                    .replace(/^```html\s*/i, '') // Remove starting ```
-                    .replace(/^```\s*/i, '')   // Remove starting ```
-                    .replace(/```$/i, '')       // Remove ending ```
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Convert **bold**
-                    .replace(/\*(.*?)\*/g, '<strong>$1</strong>') // Convert *italic*
-                    .replace(/## (.*?)\n/g, '<h3>$1</h3>') // Markdown headers to HTML
-                    .replace(/# (.*?)\n/g, '<h3>$1</h3>') // Markdown headers to HTML
-                    .replace(/\n\n/g, '</p><p>') // Double newlines to paragraphs
-                    .replace(/\n/g, '<br>') // Single newline to break
-                    .replace(/- (.*?)(<br>|$)/g, '<li>$1</li>'); // Lists to HTML
-
-                // Wrap any loose text in paragraphs
-                if (!cleanedText.startsWith('<h3>') && !cleanedText.startsWith('<p>') && !cleanedText.startsWith('<ul>')) {
-                    cleanedText = '<p>' + cleanedText + '</p>';
-                }
-
-                generatedText.innerHTML = cleanedText;
+                const htmlContent = renderMarkdownToHtml(text);
+                generatedText.innerHTML = htmlContent;
             }
             
             async function createNotes(query) {
-                // Check cache first
                 if (cachedNotes[query]) {
                     renderNotes(cachedNotes[query]);
                     showActiveSections(notesContainer);
-                    return; // Exit if notes are in cache
+                    return;
                 }
 
                 showLoading(true);
                 createNotesButton.classList.add('blinking-secondary');
                 const notesPrompt = `Generate detailed, well-structured study notes on the topic of "${query}". 
-                    Use headings with '###' and bullet points with '- '. 
-                    The notes should be comprehensive, up-to-date, and easy to study from.
-                    Format important terms with <strong> tags instead of asterisks.`;
+                Format the content with HTML tags:
+                - Use <h3> for section headings
+                - Use <ul> and <li> for bullet points
+                - Use <strong> for important terms
+                - Keep all HTML tags visible (don't escape them)
+                - Don't use markdown syntax, only HTML tags
+
+                The notes should be comprehensive and easy to study from.`;
                 const notesText = await callGemini(notesPrompt);
                 showLoading(false);
                 createNotesButton.classList.remove('blinking-secondary');
 
                 if(notesText) {
-                    cachedNotes[query] = notesText; // Cache the result
+                    cachedNotes[query] = notesText; 
                     renderNotes(notesText);
                     showActiveSections(notesContainer);
                 }
             }
+            
+            function renderMarkdownToHtml(text) {
+                // First, preserve any existing HTML tags
+                let html = text;
+                
+                // Then convert markdown to HTML
+                html = html
+                    .replace(/### (.*?)(?:\n|$)/g, '<h3>$1</h3>')
+                    .replace(/## (.*?)(?:\n|$)/g, '<h2>$1</h2>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/^- (.*?)(?:\n|$)/gm, '<li>$1</li>')
+                    .replace(/\n/g, '<br>');
 
-            function renderNotes(text) {
-                // Escape HTML tags in the text and replace newlines with <br> tags.
-                const safeHtml = escapeHtml(text).replace(/\n/g, '<br>');
-                notesContent.innerHTML = safeHtml;
+                // Wrap any sequence of <li>'s in a <ul>
+                html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+
+                // Clean up line breaks
+                html = html.replace(/<br><ul>/g, '<ul>');
+                html = html.replace(/<\/ul><br>/g, '</ul>');
+                html = html.replace(/<\/li><br><li>/g, '</li><li>');
+
+                return html;
             }
 
-            async function createQuiz(query) {
+            function renderNotes(text) {
+                const htmlContent = renderMarkdownToHtml(text);
+                notesContent.innerHTML = htmlContent;
+            }
+
+
+           async function createQuiz(query) {
                 // Check cache first
                 if (cachedQuiz[query]) {
                     renderQuiz(cachedQuiz[query]);
                     showActiveSections(quizContainer);
-                    return; // Exit if quiz is in cache
+                    return;
                 }
                 
                 showLoading(true);
@@ -1601,25 +1707,24 @@
                     properties: { 
                         questions: { 
                             type: "ARRAY", 
+                            description: "An array of 5 quiz questions.",
                             items: { 
                                 type: "OBJECT", 
                                 properties: { 
-                                    question: { type: "STRING" }, 
-                                    options: { type: "ARRAY", items: { type: "STRING" } }, 
-                                    correctAnswer: { type: "INTEGER" },
-                                    explanation: { type: "STRING" } 
+                                    question: { type: "STRING", description: "The text of the question." }, 
+                                    options: { type: "ARRAY", description: "An array of 4 possible answers.", items: { type: "STRING" } }, 
+                                    correctAnswer: { type: "INTEGER", description: "The 0-based index of the correct answer in the options array." },
+                                    explanation: { type: "STRING", description: "A brief explanation for why the correct answer is right." } 
                                 }, 
                                 required: ["question", "options", "correctAnswer", "explanation"] 
                             } 
                         } 
-                    } 
+                    },
+                    required: ["questions"]
                 };
                 
-                const quizPrompt = `Create a 5-question multiple-choice quiz about "${query}". 
-                    Each question must have 4 options and include an explanation for the correct answer.
-                    Ensure the correctAnswer is the correct 0-based index. 
-                    Focus on key concepts and recent developments.
-                    Return the response in JSON format matching this schema: ${JSON.stringify(quizSchema)}`;
+                // A simpler, more direct prompt. The formatting is handled by the tool call.
+                const quizPrompt = `Generate a 5-question multiple-choice quiz about "${query}". Focus on key concepts.`;
                 
                 const quizDataString = await callGemini(quizPrompt, quizSchema);
                 showLoading(false);
@@ -1628,15 +1733,20 @@
                 if (quizDataString) {
                     try {
                         const quizData = JSON.parse(quizDataString);
-                        cachedQuiz[query] = quizData.questions; // Cache the questions
+                        if (!quizData.questions || quizData.questions.length === 0) {
+                           throw new Error("Generated quiz has no questions.");
+                        }
+                        cachedQuiz[query] = quizData.questions; 
                         renderQuiz(quizData.questions);
                         showActiveSections(quizContainer);
                     } catch (e) {
                         console.error("Quiz parsing error:", e);
-                        showError("The AI returned an invalid quiz format. Please try again.");
+                        showError("Could not process the quiz data returned by the AI. Please try again.");
                     }
                 }
+                // No 'else' block needed; callGemini now handles showing errors if it returns null.
             }
+
 
             function renderQuiz(questions) {
                 quizContent.innerHTML = '';
@@ -1689,21 +1799,17 @@
                 const question = questions[questionIndex];
                 const questionElement = selectedOption.closest('.quiz-question');
                 
-                // If already answered, ignore
                 if (questionElement.classList.contains('answered')) return;
                 
                 questionElement.classList.add('answered');
                 questionsAnswered++;
                 
-                // Update progress bar
                 quizProgress.style.width = `${(questionsAnswered / questions.length) * 100}%`;
                 
-                // Mark all options for this question
                 const options = questionElement.querySelectorAll('.quiz-option');
                 options.forEach(opt => opt.classList.remove('selected'));
                 selectedOption.classList.add('selected');
                 
-                // Show feedback
                 const feedbackElement = questionElement.querySelector('.quiz-feedback');
                 
                 if (optionIndex === question.correctAnswer) {
@@ -1713,16 +1819,15 @@
                 } else {
                     selectedOption.classList.add('incorrect');
                     feedbackElement.classList.add('incorrect-feedback');
-                    // Highlight correct answer
-                    options[question.correctAnswer].classList.add('correct');
+                    if (options[question.correctAnswer]) {
+                        options[question.correctAnswer].classList.add('correct');
+                    }
                 }
                 
-                // Show feedback with animation
                 setTimeout(() => {
                     feedbackElement.classList.add('show');
                 }, 500);
                 
-                // If all questions answered, show results
                 if (questionsAnswered === questions.length) {
                     setTimeout(() => {
                         showQuizResults(score, questions.length);
@@ -1747,7 +1852,6 @@
                 scoreDisplay.textContent = `${score}/${totalQuestions} (${percentage}%)`;
                 resultMessage.textContent = message;
                 
-                // Show completion container
                 quizCompletionContainer.classList.remove('hidden');
                 quizCompletionContainer.scrollIntoView({ behavior: 'smooth' });
             }
@@ -1759,7 +1863,7 @@
             }
         });
     </script>
-
 </body>
-
 </html>
+
+
